@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gratitude 2025 | Centre for Social Action 🎄</title>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet">
+
+    <style>
+         :root {
+            --ease: cubic-bezier(.22, 1, .36, 1);
+            --candle: .9;
+        }
+        /* RESET */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+        /* BODY */
+        
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at center, rgba(255, 200, 120, .18), transparent 55%), linear-gradient(180deg, #050b1f, #0b2540);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+            font-family: "Playfair Display", serif;
+        }
+        /* CANDLE */
+        
+        body::before {
+            content: "";
+            position: fixed;
+            inset: -30%;
+            background: radial-gradient(circle, rgba(255, 200, 130, .35), rgba(255, 170, 90, .22), rgba(255, 120, 40, .12), transparent 65%);
+            opacity: var(--candle);
+            animation: flicker 12s infinite ease-in-out;
+            pointer-events: none;
+        }
+        
+        @keyframes flicker {
+            50% {
+                transform: scale(1.015)
+            }
+        }
+        /* CARD */
+        
+        .card {
+            width: 100%;
+            max-width: 520px;
+            padding: 38px 28px;
+            border-radius: 28px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, .26), rgba(255, 255, 255, .06));
+            backdrop-filter: blur(32px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, .18);
+            box-shadow: 0 40px 120px rgba(0, 0, 0, .6);
+            text-align: center;
+        }
+        
+        .preview,
+        .send-stage,
+        .success {
+            display: none
+        }
+        
+        .flow {
+            font-size: .7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: .75;
+            margin-bottom: 14px
+        }
+        
+        .subtitle {
+            font-size: .9rem;
+            line-height: 1.6;
+            opacity: .9;
+            margin-bottom: 24px
+        }
+        /* INPUTS */
+        
+        input,
+        textarea {
+            width: 100%;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, .3);
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, .15);
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        /* BUTTON */
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            border-radius: 24px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            background: #fff;
+            color: #1a1a1a;
+        }
+        /* LETTER */
+        
+        .letter {
+            background: linear-gradient(180deg, #f7ead1, #e4d1a3);
+            color: #4b2e1e;
+            padding: 34px 28px;
+            border-radius: 16px;
+            font-family: "Dancing Script", cursive;
+            font-size: 1.35rem;
+            line-height: 1.65;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .4), inset 0 1px 0 rgba(255, 255, 255, .6);
+            position: relative;
+        }
+        /* Paper thickness */
+        
+        .letter::before {
+            content: "";
+            position: absolute;
+            inset: 6px;
+            background: rgba(0, 0, 0, .03);
+            border-radius: 14px;
+            z-index: -1;
+        }
+        /* HANDWRITING */
+        
+        .handwriting {
+            white-space: pre-wrap;
+            border-right: 2px solid rgba(75, 46, 30, .4);
+            animation: caret 1.4s steps(1) infinite;
+        }
+        
+        @keyframes caret {
+            50% {
+                border-color: transparent
+            }
+        }
+        
+        .live-letter {
+            transition: transform 7s var(--ease), opacity 3s var(--ease);
+        }
+        /* ENVELOPE */
+        
+        .envelope-scene {
+            position: relative;
+            height: 360px;
+            margin-top: 20px;
+        }
+        
+        .envelope-message {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            text-align: center;
+            font-size: .85rem;
+            opacity: 0;
+            transition: opacity 3s var(--ease);
+            color: rgba(255, 255, 255, .75);
+        }
+        
+        .envelope-shell {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 260px;
+            height: 170px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .4);
+        }
+        
+        .envelope-body {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, #ead8b8, #d6c2a0);
+        }
+        
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 55%;
+            background: linear-gradient(180deg, #d2b48c, #c3a77b);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: top;
+            transition: transform 5s var(--ease);
+        }
+        /* SEAL */
+        
+        .seal {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            background: #8b1e1e;
+            border-radius: 50%;
+            left: 50%;
+            bottom: 46px;
+            transform: translateX(-50%) scale(.15);
+            opacity: 0;
+            box-shadow: inset 0 -6px 10px rgba(0, 0, 0, .4), inset 0 4px 6px rgba(255, 255, 255, .25);
+            transition: all 5s var(--ease);
+        }
+        
+        .seal::after {
+            content: "CSA";
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, .5);
+        }
+        /* Quote above seal */
+        
+        .seal-quote {
+            position: absolute;
+            bottom: 108px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: .8rem;
+            font-family: "Playfair Display", serif;
+            color: rgba(255, 255, 255, .75);
+            opacity: 0;
+            transition: opacity 3s var(--ease);
+        }
+        /* SUCCESS */
+        
+        .success {
+            animation: fade 2s var(--ease)
+        }
+        
+        @keyframes fade {
+            from {
+                opacity: 0;
+                transform: translateY(16px)
+            }
+            to {
+                opacity: 1
+            }
+        }
+        /* ================= INTRO OVERLAY ================= */
+        
+        #intro {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            background: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 2.5s var(--ease);
+        }
+        /* Snow */
+        
+        .intro-snow span {
+            position: absolute;
+            top: -10px;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            opacity: .6;
+            animation: fall linear infinite;
+        }
+        
+        @keyframes fall {
+            to {
+                transform: translateY(110vh)
+            }
+        }
+        /* Santa helpers (minimal silhouettes) */
+        
+        .intro-elf {
+            position: absolute;
+            bottom: 42px;
+            width: 18px;
+            height: 28px;
+            background: linear-gradient(#e11d48, #7f1d1d);
+            border-radius: 4px;
+            opacity: .85;
+            animation: run 9s linear infinite;
+        }
+        
+        .intro-elf::after {
+            content: "✉️";
+            position: absolute;
+            top: -12px;
+            left: -2px;
+            font-size: 12px;
+        }
+        
+        @keyframes run {
+            from {
+                left: -10%
+            }
+            to {
+                left: 110%
+            }
+        }
+        /* Envelope entrance */
+        
+        .intro-envelope {
+            width: 200px;
+            height: 120px;
+            background: linear-gradient(180deg, #ead8b8, #d6c2a0);
+            border-radius: 14px;
+            position: relative;
+            transform: scale(.5) translateY(60px);
+            opacity: 0;
+            animation: envelopeIn 4s var(--ease) forwards;
+        }
+        
+        @keyframes envelopeIn {
+            0% {
+                opacity: 0;
+                transform: scale(.5) translateY(80px)
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0)
+            }
+        }
+        
+        .intro-envelope::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 55%;
+            background: linear-gradient(180deg, #d2b48c, #c3a77b);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform-origin: top;
+            animation: peek 2.5s var(--ease) forwards;
+            animation-delay: 3.2s;
+        }
+        
+        @keyframes peek {
+            to {
+                transform: rotateX(35deg)
+            }
+        }
+        /* Intro text */
+        
+        .intro-text {
+            margin-top: 18px;
+            font-size: .85rem;
+            opacity: .8;
+            animation: fadeIn 3s ease forwards;
+            animation-delay: 2.5s;
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== INTRO OVERLAY ===== -->
+    <div id="intro">
+        <div class="intro-snow" id="introSnow"></div>
+
+        <div class="intro-elf"></div>
+        <div class="intro-elf" style="animation-delay:3s"></div>
+
+        <div class="intro-envelope"></div>
+        <div class="intro-text">Letters are already on their way…</div>
+    </div>
+
+
+    <!-- WRITE -->
+    <div class="card" id="formBox">
+        <div class="flow">Centre for Social Action</div>
+        <h1>🎄 Gratitude 2025</h1>
+        <p class="subtitle">You don’t have to rush this.</p>
+        <input id="recipient" placeholder="Who are you grateful for?" />
+        <textarea id="message" placeholder="Write your gratitude here…"></textarea>
+        <button onclick="showPreview()">Preview Letter</button>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="card preview" id="previewBox">
+        <div class="letter">
+            <div id="pTo"></div>
+            <div id="pMessage"></div>
+            <div class="signature">— Centre for Social Action</div>
+        </div>
+        <button onclick="sendFinal()">Seal & Send</button>
+    </div>
+
+    <!-- SEND -->
+    <div class="card send-stage" id="sendBox">
+        <div class="letter live-letter handwriting" id="liveLetter"></div>
+
+        <div class="envelope-scene">
+            <div class="envelope-message" id="envelopeMessage">
+                Take a breath. This moment matters.
+            </div>
+
+            <div class="envelope-shell">
+                <div class="envelope-body"></div>
+                <div class="envelope-flap" id="flap"></div>
+            </div>
+
+            <div class="seal-quote" id="sealQuote">
+                With gratitude, gently sealed.
+            </div>
+
+            <div class="seal" id="seal"></div>
+        </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="card success" id="successBox">
+        <h1>🤍 It has been received</h1>
+        <p class="subtitle">Thank you for taking this moment.</p>
+    </div>
+
+    <script>
+        firebase.initializeApp({
+            apiKey: "AIzaSyAfg-H64wDdxB4NOpfSDVzY9z-iUxaT7gI",
+            authDomain: "csa-christmas-gratitude.firebaseapp.com",
+            projectId: "csa-christmas-gratitude"
+        });
+        const db = firebase.firestore();
+
+        function showPreview() {
+            if (!recipient.value || !message.value) return;
+            formBox.style.display = "none";
+            previewBox.style.display = "block";
+            pTo.textContent = "To: " + recipient.value;
+            pMessage.textContent = message.value;
+        }
+
+        function typeHandwriting(el, text) {
+            el.innerHTML = "";
+            document.documentElement.style.setProperty('--candle', '1.15');
+            let i = 0;
+            const t = setInterval(() => {
+                el.innerHTML += text[i];
+                i++;
+                if (i >= text.length) {
+                    clearInterval(t);
+                    el.classList.remove("handwriting");
+                }
+            }, 140);
+        }
+
+        async function sendFinal() {
+            previewBox.style.display = "none";
+            sendBox.style.display = "block";
+
+            const full = `To: ${recipient.value}\n\n${message.value}\n\n— Centre for Social Action`;
+            typeHandwriting(liveLetter, full);
+
+            const writingTime = full.length * 140;
+
+            // Fold + insert
+            setTimeout(() => {
+                liveLetter.style.transform = "translateY(230px) scale(.72)";
+                liveLetter.style.opacity = "0";
+                envelopeMessage.style.opacity = "1";
+            }, writingTime + 2200);
+
+            // Close envelope
+            setTimeout(() => {
+                envelopeMessage.style.opacity = "0";
+                flap.style.transform = "rotateX(180deg)";
+            }, writingTime + 7200);
+
+            // Seal + quote
+            setTimeout(() => {
+                seal.style.opacity = "1";
+                seal.style.transform = "translateX(-50%) scale(1)";
+                sealQuote.style.opacity = "1";
+                document.documentElement.style.setProperty('--candle', '.85');
+            }, writingTime + 11500);
+
+            // Rest, then close
+            setTimeout(() => {
+                sendBox.style.display = "none";
+                successBox.style.display = "block";
+            }, writingTime + 16500);
+
+            await db.collection("messages").add({
+                recipient: recipient.value,
+                message: message.value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+
+        /* ===== INTRO LOGIC ===== */
+
+        // Create snowfall
+        for (let i = 0; i < 40; i++) {
+            const s = document.createElement("span");
+            s.style.left = Math.random() * 100 + "%";
+            s.style.animationDuration = 6 + Math.random() * 6 + "s";
+            document.getElementById("introSnow").appendChild(s);
+        }
+
+        // Fade out intro & reveal app
+        setTimeout(() => {
+            const intro = document.getElementById("intro");
+            if (!intro) return;
+
+            intro.style.opacity = "0";
+
+            setTimeout(() => {
+                intro.remove();
+            }, 2500);
+        }, 8000);
+    </script>
+
+</body>
+
+</html>
