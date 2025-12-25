@@ -368,6 +368,25 @@
                 opacity: 1
             }
         }
+        /* Brighter & clearer placeholder text */
+        
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.85);
+            opacity: 1;
+            font-weight: 500;
+        }
+        /* Safari & older browser support */
+        
+        input::-webkit-input-placeholder,
+        textarea::-webkit-input-placeholder {
+            color: rgba(255, 255, 255, 0.85);
+        }
+        
+        input:-ms-input-placeholder,
+        textarea:-ms-input-placeholder {
+            color: rgba(255, 255, 255, 0.85);
+        }
     </style>
 </head>
 
