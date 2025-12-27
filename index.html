@@ -2,6 +2,8 @@
 <html lang="en">
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gratitude 2025 | Centre for Social Action 🎄</title>
@@ -387,10 +389,214 @@
         textarea:-ms-input-placeholder {
             color: rgba(255, 255, 255, 0.85);
         }
+        /* ===== CINEMATIC LIGHT BREATH ===== */
+        
+        body::after {
+            content: "";
+            position: fixed;
+            inset: -20%;
+            background: radial-gradient(circle at center, rgba(255, 200, 120, .12), rgba(0, 0, 0, .35) 70%);
+            animation: lightBreath 18s ease-in-out infinite;
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+        
+        @keyframes lightBreath {
+            0%,
+            100% {
+                opacity: .45;
+                transform: scale(1)
+            }
+            50% {
+                opacity: .7;
+                transform: scale(1.05)
+            }
+        }
+        /* ===== FILM GRAIN ===== */
+        
+        .film-grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 998;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+            animation: grainMove .8s steps(2) infinite;
+        }
+        
+        @keyframes grainMove {
+            to {
+                transform: translate3d(-10%, 10%, 0)
+            }
+        }
+        /* ===== INTRO TITLE CARD ===== */
+        
+        .intro-title {
+            margin-top: 18px;
+            font-size: 1.2rem;
+            letter-spacing: .25em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: introTitle 4s ease forwards;
+            animation-delay: 2.8s;
+        }
+        
+        .intro-sub {
+            margin-top: 10px;
+            font-size: .8rem;
+            letter-spacing: .18em;
+            opacity: 0;
+            animation: introTitle 4s ease forwards;
+            animation-delay: 4.2s;
+        }
+        
+        @keyframes introTitle {
+            to {
+                opacity: .85
+            }
+        }
+        /* ===== LETTER SPOTLIGHT ===== */
+        
+        .live-letter {
+            position: relative;
+        }
+        
+        .live-letter::after {
+            content: "";
+            position: absolute;
+            inset: -20%;
+            background: radial-gradient(circle at center, rgba(255, 200, 120, .18), transparent 65%);
+            opacity: 0;
+            transition: opacity 4s var(--ease);
+            pointer-events: none;
+        }
+        
+        .send-stage .live-letter::after {
+            opacity: 1;
+        }
+        /* ===== CINEMATIC CAMERA PUSH-IN ===== */
+        
+        .send-stage {
+            perspective: 1200px;
+        }
+        
+        .send-stage .letter {
+            transform-origin: center center;
+            animation: cameraPush 18s cubic-bezier(.22, 1, .36, 1) forwards;
+        }
+        
+        @keyframes cameraPush {
+            0% {
+                transform: scale(1) translateY(0);
+            }
+            100% {
+                transform: scale(1.035) translateY(-6px);
+            }
+        }
+        /* Slight depth softening for realism */
+        
+        .send-stage .letter {
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .6);
+        }
+        /* ================= MOBILE REFINEMENTS ================= */
+        
+        @media (max-width: 600px) {
+            body {
+                padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom);
+                align-items: flex-start;
+            }
+            .card {
+                max-width: 100%;
+                padding: 28px 20px;
+                border-radius: 22px;
+                margin-top: 16px;
+            }
+            h1 {
+                font-size: 1.45rem;
+            }
+            .subtitle {
+                font-size: .9rem;
+                margin-bottom: 18px;
+            }
+            input,
+            textarea {
+                font-size: 1rem;
+                padding: 14px 16px;
+                border-radius: 18px;
+            }
+            textarea {
+                min-height: 140px;
+            }
+            button {
+                padding: 15px;
+                font-size: 1rem;
+                border-radius: 22px;
+            }
+            /* ===== LETTER ===== */
+            .letter {
+                font-size: 1.15rem;
+                line-height: 1.65;
+                padding: 26px 20px;
+            }
+            .signature {
+                margin-top: 18px;
+                font-size: .9rem;
+            }
+            /* ===== ENVELOPE SCENE ===== */
+            .envelope-scene {
+                height: 300px;
+                margin-top: 12px;
+            }
+            .envelope-shell {
+                width: 220px;
+                height: 150px;
+            }
+            .seal {
+                width: 48px;
+                height: 48px;
+                bottom: 40px;
+            }
+            .seal::after {
+                font-size: .7rem;
+            }
+            .seal-quote {
+                font-size: .75rem;
+                bottom: 96px;
+            }
+            .envelope-message {
+                font-size: .75rem;
+            }
+            /* ===== INTRO ===== */
+            .intro-title {
+                font-size: 1rem;
+                letter-spacing: .18em;
+            }
+            .intro-sub {
+                font-size: .7rem;
+                letter-spacing: .15em;
+            }
+            .intro-envelope {
+                width: 160px;
+                height: 96px;
+            }
+            /* ===== REDUCE MOTION (BATTERY + COMFORT) ===== */
+            @media (prefers-reduced-motion: reduce) {
+                * {
+                    animation-duration: .01ms !important;
+                    animation-iteration-count: 1 !important;
+                    transition-duration: .01ms !important;
+                }
+            }
+        }
+        
+        button {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
     </style>
 </head>
 
 <body>
+    <div class="film-grain"></div>
 
     <!-- ===== INTRO OVERLAY ===== -->
     <div id="intro">
@@ -400,7 +606,11 @@
         <div class="intro-elf" style="animation-delay:3s"></div>
 
         <div class="intro-envelope"></div>
-        <div class="intro-text">Letters are already on their way…</div>
+        <div class="intro-title">Gratitude 2025</div>
+        <div class="intro-sub">
+            Written • Remembered • Preserved
+        </div>
+
     </div>
 
 
@@ -488,6 +698,9 @@
 
             const full = `To: ${recipient.value}\n\n${message.value}\n\n— Centre for Social Action`;
             typeHandwriting(liveLetter, full);
+            // 🎥 Start gentle camera push-in
+            liveLetter.style.animationPlayState = "running";
+
 
             const writingTime = full.length * 140;
 
@@ -523,6 +736,11 @@
                 message: message.value,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
+            // 🎬 Ease camera back before transition
+            setTimeout(() => {
+                liveLetter.style.transform = "scale(1)";
+            }, writingTime + 14500);
+
         }
 
         /* ===== INTRO LOGIC ===== */
@@ -546,6 +764,18 @@
                 intro.remove();
             }, 2500);
         }, 8000);
+
+        /* ===== MOBILE KEYBOARD SAFETY ===== */
+        const viewport = window.visualViewport;
+
+        if (viewport) {
+            viewport.addEventListener("resize", () => {
+                document.body.style.paddingBottom =
+                    viewport.height < window.innerHeight ?
+                    "280px" :
+                    "";
+            });
+        }
     </script>
 
 </body>

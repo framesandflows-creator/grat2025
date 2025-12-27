@@ -244,10 +244,180 @@
         .delete-btn {
             left: 10px
         }
+        /* ================= CINEMATIC INTRO ================= */
+        
+        #cinematicIntro {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: radial-gradient(1200px 600px at top, rgba(255, 255, 255, .08), transparent 60%), linear-gradient(180deg, #020617, #050b1f);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        /* Soft film grain */
+        
+        #cinematicIntro::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        
+        .intro-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 35%, rgba(0, 0, 0, .75) 80%);
+        }
+        
+        .intro-content {
+            position: relative;
+            text-align: center;
+            color: #fff;
+            animation: introFade 1.6s cubic-bezier(.22, 1, .36, 1);
+            <div>class="intro-manifesto"><span>Written</span><span class="dot">•</span><span>Remembered</span><span class="dot">•</span><span>Preserved</span></div>
+        }
+        
+        .intro-title {
+            font-size: 3rem;
+            letter-spacing: .04em;
+            margin-bottom: 10px;
+        }
+        
+        .intro-subtitle {
+            opacity: .85;
+            font-size: 1.05rem;
+        }
+        
+        .intro-divider {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            margin: 26px auto 30px;
+            opacity: .7;
+        }
+        
+        .intro-enter {
+            padding: 14px 36px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .5);
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+            font-size: .95rem;
+            letter-spacing: .08em;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            transition: all .6s cubic-bezier(.22, 1, .36, 1);
+        }
+        
+        .intro-enter:hover {
+            background: rgba(255, 255, 255, .18);
+            transform: translateY(-2px);
+        }
+        /* EXIT ANIMATION */
+        
+        #cinematicIntro.exit {
+            animation: introExit 1.4s cubic-bezier(.22, 1, .36, 1) forwards;
+        }
+        
+        @keyframes introFade {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(.96);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+        
+        @keyframes introExit {
+            to {
+                opacity: 0;
+                transform: scale(1.08);
+                pointer-events: none;
+            }
+        }
+        /* ========== MANIFESTO TEXT ANIMATION ========== */
+        
+        .intro-manifesto {
+            margin-top: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: .95rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            opacity: .9;
+        }
+        
+        .intro-manifesto span {
+            opacity: 0;
+            transform: translateY(8px);
+            animation: wordReveal 2.4s cubic-bezier(.22, 1, .36, 1) forwards;
+        }
+        
+        .intro-manifesto span:nth-child(1) {
+            animation-delay: .6s;
+        }
+        
+        .intro-manifesto span:nth-child(2) {
+            animation-delay: 1.6s;
+        }
+        
+        .intro-manifesto span:nth-child(3) {
+            animation-delay: 2.2s;
+        }
+        
+        .intro-manifesto span:nth-child(4) {
+            animation-delay: 3.2s;
+        }
+        
+        .intro-manifesto span:nth-child(5) {
+            animation-delay: 3.8s;
+        }
+        
+        .intro-manifesto .dot {
+            opacity: .4;
+        }
+        
+        @keyframes wordReveal {
+            0% {
+                opacity: 0;
+                filter: blur(6px);
+                transform: translateY(10px);
+            }
+            60% {
+                opacity: 1;
+                filter: blur(0);
+                transform: translateY(0);
+            }
+            100% {
+                opacity: .85;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- 🎬 CINEMATIC INTRO -->
+    <div id="cinematicIntro">
+        <div class="intro-overlay"></div>
+
+        <div class="intro-content">
+            <h1 class="intro-title">CSA Gratitude</h1>
+            <p class="intro-subtitle">A quiet archive of words that mattered.</p>
+
+            <div class="intro-divider"></div>
+
+            <button class="intro-enter" onclick="enterArchive()">
+            Enter Archive
+        </button>
+        </div>
+    </div>
 
     <div class="header">
         <h1>🎄 CSA Gratitude Archive</h1>
@@ -563,6 +733,16 @@
 
             db.collection("messages").doc(id).delete()
                 .catch(() => alert("Delete failed"));
+        }
+
+        /* 🎬 CINEMATIC INTRO CONTROL */
+        function enterArchive() {
+            const intro = document.getElementById("cinematicIntro");
+            intro.classList.add("exit");
+
+            setTimeout(() => {
+                intro.remove();
+            }, 1400);
         }
     </script>
 
